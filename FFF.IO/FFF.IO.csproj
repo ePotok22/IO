@@ -3,31 +3,23 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.6</Version>
-    <Company>Lightwork AI co., ltd</Company>
-    <Product>Lightwork IO</Product>
+    <Version>1.0.0</Version>
+    <Company></Company>
+    <Product>IO</Product>
     <Copyright>Copyright © 2022</Copyright>
     <Description>Contains types that allow reading and writing to files and data streams, and types that provide basic file and directory support.</Description>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <Authors>Lightwork Team</Authors>
-    <PackageIcon>icon.png</PackageIcon>
+    <Authors>FFF</Authors>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
+    <PackageReference Include="System.IO.Abstractions" Version="19.2.22" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </Resource>
+
   </ItemGroup>
 
 </Project>
