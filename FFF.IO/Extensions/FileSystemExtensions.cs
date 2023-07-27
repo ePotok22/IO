@@ -12,10 +12,10 @@ namespace FFF.IO
         private const int DEFAULT_TIMEOUT_MS = 1500;
 
         public static bool ExistsWithTimeout(this DirectoryBase directoryBase,string path, int timeoutInMiliseconds = DEFAULT_TIMEOUT_MS) =>
-            Task.Run<bool>(() => directoryBase.Exists(path)).DefaultAfter<bool>(TimeSpan.FromMilliseconds(timeoutInMiliseconds)).Result;
+            Task.Run(() => directoryBase.Exists(path)).DefaultAfter(TimeSpan.FromMilliseconds(timeoutInMiliseconds)).Result;
 
         public static bool? IsDirectoryWritableWithTimeout(this IFileSystem fileSystem, string dirPath, int timeoutInMiliseconds = DEFAULT_TIMEOUT_MS) =>
-            new bool?(Task.Run(() => fileSystem.IsDirectoryWritable(dirPath)).DefaultAfter<bool>(TimeSpan.FromMilliseconds(timeoutInMiliseconds)).Result);
+            new bool?(Task.Run(() => fileSystem.IsDirectoryWritable(dirPath)).DefaultAfter(TimeSpan.FromMilliseconds(timeoutInMiliseconds)).Result);
 
         public static bool IsDirectoryWritable(this IFileSystem fileSystem, string dirPath)
         {
@@ -25,10 +25,7 @@ namespace FFF.IO
                 using (fileSystem.File.Create(path, 1, FileOptions.DeleteOnClose)) { }
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
         public static void EnforcePathDirectory(this IFileSystem fileSystem, string path)
@@ -64,12 +61,12 @@ namespace FFF.IO
           Func<FileInfoBase, bool> fileFilter = null,
           bool overwrite = false)
         {
-            DirectoryInfoBase directoryInfoBase1 = fileSystem.DirectoryInfo.FromDirectoryName(from) as DirectoryInfoBase;
-            DirectoryInfoBase directoryInfoBase2 = fileSystem.DirectoryInfo.FromDirectoryName(dest) as DirectoryInfoBase;
+            DirectoryInfoBase directoryInfoBase1 = fileSystem.DirectoryInfo.New(from) as DirectoryInfoBase;
+            DirectoryInfoBase directoryInfoBase2 = fileSystem.DirectoryInfo.New(dest) as DirectoryInfoBase;
             fileSystem.Directory.CreateDirectory(directoryInfoBase2.FullName);
             foreach (string file in fileSystem.Directory.GetFiles(from))
             {
-                FileInfoBase fileInfoBase = fileSystem.FileInfo.FromFileName(file) as FileInfoBase;
+                FileInfoBase fileInfoBase = fileSystem.FileInfo.New(file) as FileInfoBase;
                 if (fileFilter == null || !fileFilter(fileInfoBase))
                 {
                     string str = file.Replace(from, dest);

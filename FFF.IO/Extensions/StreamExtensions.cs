@@ -186,9 +186,7 @@ namespace FFF.IO
         {
             if (stream.CanSeek && otherStream.CanSeek
                 && stream.Length != otherStream.Length)
-            {
                 return false;
-            }
 
             byte[] buffer1 = new byte[4096];
             byte[] buffer2 = new byte[4096];
@@ -201,15 +199,11 @@ namespace FFF.IO
                 {
                     int num = otherStream.Read(buffer2, 0, count);
                     if (count != num)
-                    {
                         return false;
-                    }
                     for (int index = 0; index < count; ++index)
                     {
                         if (buffer1[index] != buffer2[index])
-                        {
                             return false;
-                        }
                     }
                 }
             }
@@ -260,8 +254,6 @@ namespace FFF.IO
             return retVal;
         }
 
-        private const int BufferSize = 0x2000;
-
         /// <summary>Read from a stream asynchronously.</summary>
         /// <param name="stream">The stream.</param>
         /// <param name="buffer">An array of bytes to be filled by the read operation.</param>
@@ -292,6 +284,5 @@ namespace FFF.IO
                 stream.BeginWrite, stream.EndWrite,
                 buffer, offset, count, stream);
         }
-
     }
 }

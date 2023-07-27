@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FFF.IO.Native
+﻿namespace FFF.IO.Native
 {
     /// <summary>
     /// File Operation Function Type for SHFileOperation

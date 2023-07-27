@@ -16,7 +16,9 @@ namespace FFF.IO
         {
             try
             {
-                return basePath != null && toCheck != null && new Uri(Path.Combine(basePath, Path.PathSeparator.ToString())).IsBaseOf(new Uri(toCheck));
+                return basePath != null &&
+                       toCheck != null &&
+                       new Uri(Path.Combine(basePath, Path.PathSeparator.ToString())).IsBaseOf(new Uri(toCheck));
             }
             catch { }
             return false;
@@ -30,11 +32,10 @@ namespace FFF.IO
                     return true;
                 if (basePath == null || toCheck == null)
                     return false;
-                return basePath.EnforcePrimaryDirectorySeparator().Equals(toCheck.EnforcePrimaryDirectorySeparator(), StringComparison.OrdinalIgnoreCase) || Uri.Compare(new Uri(basePath), new Uri(toCheck), UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0;
+                return basePath.EnforcePrimaryDirectorySeparator().Equals(toCheck.EnforcePrimaryDirectorySeparator(), StringComparison.OrdinalIgnoreCase) ||
+                       Uri.Compare(new Uri(basePath), new Uri(toCheck), UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0;
             }
-            catch
-            {
-            }
+            catch { }
             return false;
         }
 
@@ -48,10 +49,7 @@ namespace FFF.IO
                 Uri uri = new Uri(path);
                 return uri.IsUnc || uri.IsAbsoluteUri;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
         public static bool IsNetworkPath(this string path)
@@ -85,10 +83,7 @@ namespace FFF.IO
                     Uri uri = new Uri(path, UriKind.RelativeOrAbsolute);
                     return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
                 }
-                catch
-                {
-                    return false;
-                }
+                catch { return false; }
             }
             else
                 return false;
@@ -131,13 +126,14 @@ namespace FFF.IO
         {
             try
             {
-                return Uri.UnescapeDataString((!referencePath.EndsWith(Path.DirectorySeparatorChar.ToString()) || !referencePath.EndsWith(Path.AltDirectorySeparatorChar.ToString()) ? new Uri(referencePath + Path.DirectorySeparatorChar.ToString()) : new Uri(referencePath)).MakeRelativeUri(new Uri(filePath)).OriginalString);
+                return Uri.UnescapeDataString((!referencePath.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
+                       !referencePath.EndsWith(Path.AltDirectorySeparatorChar.ToString()) ? new Uri(referencePath + Path.DirectorySeparatorChar.ToString()) : new Uri(referencePath)).MakeRelativeUri(new Uri(filePath)).OriginalString);
             }
             catch (Exception ex)
             {
                 Trace.TraceError(string.Format("MakeRelative error {0}", (object)ex));
             }
-            return (string)null;
+            return null;
         }
 
         public static string MakeAbsolute(this string relativePath, string referencePath)
@@ -146,11 +142,8 @@ namespace FFF.IO
             {
                 return IsPathAbsolute(relativePath) ? relativePath : Path.Combine(referencePath, relativePath);
             }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-            }
-            return (string)null;
+            catch (Exception ex) { Trace.TraceError(ex.Message); }
+            return null;
         }
 
         public static string EnforcePrimaryDirectorySeparator(this string filePath) =>
@@ -167,7 +160,7 @@ namespace FFF.IO
         {
             if (string.IsNullOrEmpty(fileName))
                 return false;
-            return fileName.IndexOfAny(PathExtensions.InvalidPathCharacters) >= 0 || fileName.GetCharactersIncompatibleWithWorkflowIdentity().Any<char>();
+            return fileName.IndexOfAny(InvalidPathCharacters) >= 0 || fileName.GetCharactersIncompatibleWithWorkflowIdentity().Any<char>();
         }
 
         public static string ExpandEnvironmentVariables(this string path) =>
@@ -190,10 +183,10 @@ namespace FFF.IO
         public static IEnumerable<char> GetInvalidPathCharacters(this string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
-                return (IEnumerable<char>)null;
-            IEnumerable<char> source = filePath.Where<char>(c => InvalidPathCharacters.Contains(c)).Union(filePath.GetCharactersIncompatibleWithWorkflowIdentity());
-            if (!source.Any<char>())
-                source = PathExtensions.GetInvalidFileNameCharactersInPath(filePath);
+                return null;
+            IEnumerable<char> source = filePath.Where(c => InvalidPathCharacters.Contains(c)).Union(filePath.GetCharactersIncompatibleWithWorkflowIdentity());
+            if (!source.Any())
+                source = GetInvalidFileNameCharactersInPath(filePath);
             return source;
         }
 
@@ -202,12 +195,9 @@ namespace FFF.IO
             try
             {
                 string pathRoot = Path.GetPathRoot(filePath);
-                return filePath.Substring(pathRoot.Length).Where<char>((Func<char, bool>)(c => (int)c != (int)Path.AltDirectorySeparatorChar && (int)c != (int)Path.DirectorySeparatorChar && ((IEnumerable<char>)PathExtensions.InvalidFileNameCharacters).Contains<char>(c)));
+                return filePath.Substring(pathRoot.Length).Where((c => c != Path.AltDirectorySeparatorChar && c != Path.DirectorySeparatorChar && InvalidFileNameCharacters.Contains(c)));
             }
-            catch (Exception ex)
-            {
-                Trace.TraceError(ex.Message);
-            }
+            catch (Exception ex) { Trace.TraceError(ex.Message); }
             return Enumerable.Empty<char>();
         }
 
@@ -219,8 +209,8 @@ namespace FFF.IO
             if (string.IsNullOrWhiteSpace(filePath))
                 return filePath;
 
-            string fullPath = Path.GetFullPath(filePath);
             char directorySeparatorChar = Path.AltDirectorySeparatorChar;
+            string fullPath = Path.GetFullPath(filePath);
             string oldValue = directorySeparatorChar.ToString();
 
             directorySeparatorChar = Path.DirectorySeparatorChar;

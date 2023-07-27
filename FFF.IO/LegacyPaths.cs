@@ -8,7 +8,7 @@ namespace FFF.IO
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
         public static string AppData() =>
-             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
         public static string UserProfile() =>
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

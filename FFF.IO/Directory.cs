@@ -95,7 +95,6 @@ namespace FFF.IO
                 //throw ex.InnerException;
                 ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
             }
-            //---------------------------------------------------------------------------------
             try
             {
                 //Copy all the files & Replaces any files with the same name
@@ -275,7 +274,7 @@ namespace FFF.IO
 
         internal static void SetAccessControl(DirectoryInfo destination, DirectoryInfo source)
         {
-            System.Security.AccessControl.DirectorySecurity sourceSecurity = source.GetAccessControl();
+            DirectorySecurity sourceSecurity = source.GetAccessControl();
             sourceSecurity.SetAccessRuleProtection(true, true);
             destination.SetAccessControl(sourceSecurity);
         }

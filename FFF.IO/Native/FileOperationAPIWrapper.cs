@@ -7,7 +7,6 @@ namespace FFF.IO.Native
 {
     internal static class FileOperationAPIWrapper
     {
-
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         private static extern int SHFileOperation(ref SHFILEOPSTRUCT FileOp);
 
@@ -20,7 +19,7 @@ namespace FFF.IO.Native
         {
             try
             {
-                var fs = new SHFILEOPSTRUCT
+                SHFILEOPSTRUCT fs = new SHFILEOPSTRUCT
                 {
                     wFunc = FileOperationType.FO_DELETE,
                     pFrom = path + '\0' + '\0',
@@ -29,36 +28,28 @@ namespace FFF.IO.Native
                 SHFileOperation(ref fs);
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            catch (Exception) { return false; }
         }
 
         /// <summary>
         /// Send file to recycle bin.  Display dialog, display warning if files are too big to fit (FOF_WANTNUKEWARNING)
         /// </summary>
         /// <param name="path">Location of directory or file to recycle</param>
-        public static bool Send(string path)
-        {
-            return Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_WANTNUKEWARNING);
-        }
+        public static bool Send(string path) =>
+            Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_WANTNUKEWARNING);
 
         /// <summary>
         /// Send file silently to recycle bin.  Surpress dialog, surpress errors, delete if too large.
         /// </summary>
         /// <param name="path">Location of directory or file to recycle</param>
-        public static bool MoveToRecycleBin(string path)
-        {
-            return Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI | FileOperationFlags.FOF_SILENT);
-
-        }
+        public static bool MoveToRecycleBin(string path) =>
+            Send(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI | FileOperationFlags.FOF_SILENT);
 
         private static bool deleteFile(string path, FileOperationFlags flags)
         {
             try
             {
-                var fs = new SHFILEOPSTRUCT
+                SHFILEOPSTRUCT fs = new SHFILEOPSTRUCT
                 {
                     wFunc = FileOperationType.FO_DELETE,
                     pFrom = path + '\0' + '\0',
@@ -67,18 +58,11 @@ namespace FFF.IO.Native
                 SHFileOperation(ref fs);
                 return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            catch (Exception) { return false; }
         }
 
-        public static bool DeleteCompletelySilent(string path)
-        {
-            return deleteFile(path,
-                              FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI |
-                              FileOperationFlags.FOF_SILENT);
-        }
+        public static bool DeleteCompletelySilent(string path) =>
+            deleteFile(path, FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI | FileOperationFlags.FOF_SILENT);
 
         [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
         private static extern int RmRegisterResources(
@@ -147,7 +131,7 @@ namespace FFF.IO.Native
             if (RmStartSession(out pSessionHandle, 0, strSessionKey) != 0)
             {
                 Trace.TraceError("Cannot start RmStartSession");
-                return (IEnumerable<int>)pids;
+                return pids;
             }
             try
             {
@@ -158,7 +142,7 @@ namespace FFF.IO.Native
                 if (RmRegisterResources(pSessionHandle, (uint)rgsFilenames.Length, rgsFilenames, 0U, (RmUniqueProcess[])null, 0U, (string[])null) != 0)
                 {
                     Trace.TraceError("RmRegisterResources failded " + filePath);
-                    return (IEnumerable<int>)pids;
+                    return pids;
                 }
                 int list = RmGetList(pSessionHandle, out pnProcInfoNeeded, ref pnProcInfo1, (RmProcessInfo[])null, ref lpdwRebootReasons);
                 switch (list)
@@ -180,11 +164,8 @@ namespace FFF.IO.Native
                         break;
                 }
             }
-            finally
-            {
-                RmEndSession(pSessionHandle);
-            }
-            return (IEnumerable<int>)pids;
+            finally { RmEndSession(pSessionHandle); }
+            return pids;
         }
     }
 }
